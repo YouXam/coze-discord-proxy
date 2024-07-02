@@ -66,7 +66,7 @@ func ChannelCreate(c *gin.Context) {
 // @Produce json
 // @Param id path string true "id"
 // @Success 200 {object} string "Successful response"
-// @Router /api/channel/del/{id} [get]
+// @Router /api/channel/del/{id} [delete]
 func ChannelDel(c *gin.Context) {
 	channelId := c.Param("id")
 

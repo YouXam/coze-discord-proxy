@@ -3,6 +3,7 @@ package model
 type OpenAIChatCompletionRequest struct {
 	Model    string              `json:"model"`
 	Stream   bool                `json:"stream"`
+	NoRun    bool                `json:"noRun"`
 	Messages []OpenAIChatMessage `json:"messages"`
 	OpenAIChatCompletionExtraRequest
 }

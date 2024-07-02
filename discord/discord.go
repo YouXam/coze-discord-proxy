@@ -437,7 +437,7 @@ func messageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	return
 }
 
-func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discordgo.Message, string, error) {
+func SendMessage(c *gin.Context, channelID, cozeBotId, message string, noRun bool) (*discordgo.Message, string, error) {
 	var ctx context.Context
 	if c == nil {
 		ctx = context.Background()
@@ -451,8 +451,11 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 	}
 
 	//var sentMsg *discordgo.Message
+	content := message
 
-	content := fmt.Sprintf("%s \n <@%s>", message, cozeBotId)
+	if !noRun {
+		content = fmt.Sprintf("%s \n <@%s>", message, cozeBotId)
+	}
 
 	content = strings.Replace(content, `\u0026`, "&", -1)
 	content = strings.Replace(content, `\u003c`, "<", -1)
@@ -494,7 +497,7 @@ func SendMessage(c *gin.Context, channelID, cozeBotId, message string) (*discord
 			if errors.As(err, &myErr) {
 				// 无效则将此 auth 移除
 				UserAuthorizations = common.FilterSlice(UserAuthorizations, userAuth)
-				return SendMessage(c, channelID, cozeBotId, message)
+				return SendMessage(c, channelID, cozeBotId, message, noRun)
 			}
 			common.LogError(ctx, fmt.Sprintf("error sending message: %s", err))
 			return nil, "", fmt.Errorf("error sending message")
@@ -610,7 +613,7 @@ func stayActiveMessageTask() {
 				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!雪花Id生成失败!", sendChannelId, config.CozeBotId))
 				continue
 			}
-			_, _, err = SendMessage(nil, sendChannelId, config.CozeBotId, fmt.Sprintf("【%v】 %s", nextID, "CDP Scheduled Task Job Send Msg Success!"))
+			_, _, err = SendMessage(nil, sendChannelId, config.CozeBotId, fmt.Sprintf("【%v】 %s", nextID, "CDP Scheduled Task Job Send Msg Success!"), false)
 			if err != nil {
 				common.SysError(fmt.Sprintf("ChannelId{%s} BotId{%s} 活跃机器人任务消息发送异常!", sendChannelId, config.CozeBotId))
 			} else {

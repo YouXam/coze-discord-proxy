@@ -50,7 +50,7 @@ const docTemplate = `{
             }
         },
         "/api/channel/del/{id}": {
-            "get": {
+            "delete": {
                 "description": "删除频道",
                 "consumes": [
                     "application/json"

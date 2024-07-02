@@ -272,7 +272,7 @@ loop:
 		content = string(jsonData)
 	}
 
-	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content)
+	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, content, request.NoRun)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
@@ -280,6 +280,13 @@ loop:
 				Type:    "request_error",
 				Code:    "500",
 			},
+		})
+		return
+	}
+
+	if request.NoRun {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
 		})
 		return
 	}
@@ -533,7 +540,7 @@ func ImagesForOpenAI(c *gin.Context) {
 		}()
 	}
 
-	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, common.ImgGeneratePrompt+request.Prompt)
+	sentMsg, userAuth, err := discord.SendMessage(c, sendChannelId, calledCozeBotId, common.ImgGeneratePrompt+request.Prompt, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.OpenAIErrorResponse{
 			OpenAIError: model.OpenAIError{
